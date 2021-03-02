@@ -1,9 +1,35 @@
 const http = require('http');
+const fs = require('fs');
 
 const server = http.createServer((req, res) => {
-    res.setHeader('Content-Type', 'text/plain');
-    res.write('Welcome to the simplest web!');
-    res.end();
+    const url = req.url;
+    const method = req.method;
+    console.log(req.body, req.method, req.url);
+    if (url === '/') {
+        res.setHeader('Content-Type', 'text/html;charset=utf-8');
+        res.write('<html>' +
+            '<title>Sample web app</title>' +
+            '<body><form action="/message" method="post"><input type="text" name="message"><button type="submit">send a message</button></form></body>' +
+            '</html>');
+        return res.end();
+    } else if(url === '/message' && method === 'POST') {
+        const body = [];
+        // listen to particular event
+        req.on('data', (chunk) => {
+            console.log(chunk);
+            body.push(chunk);
+        });
+        req.on('end', () => {
+           const parsedBody = Buffer
+               .concat(body) //  create new buffer and add all chunk to buffer
+               .toString();
+            const message = parsedBody.split('=')[1];
+            fs.writeFileSync('./tmp/message.txt', message, {flag: 'a'});
+        });
+        res.setHeader('Location', '/');
+        res.statusCode = 302;
+        return res.end();
+    }
 });
 
 server.listen(3000);
