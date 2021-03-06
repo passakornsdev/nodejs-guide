@@ -7,7 +7,7 @@ const shopRoute = require('./routes/shop');
 //create express app
 const app = express();
 
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(adminRoute);
 app.use(shopRoute);
