@@ -12,7 +12,7 @@ router.get('/add-product', (req, res, next) => {
     res.render('add-product', {pageTitle: 'Add Product', path: endpoint + '/add-product'});
 });
 
-router.post('/product', (req, res, next) => {
+router.post('/add-product', (req, res, next) => {
     product.push({title: req.body.title});
     res.redirect('/');
 });
