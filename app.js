@@ -23,7 +23,7 @@ app.use(shopRoute);
 app.use((req, res, next) => {
     res
         .status(404)
-        .sendFile(path.join(__dirname, 'views', 'not-found.html'));
+        .render('not-found');
 });
 
 app.listen(3000);
