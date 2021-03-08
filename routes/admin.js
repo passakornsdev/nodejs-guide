@@ -9,7 +9,7 @@ const endpoint = '/admin';
 const product = [];
 
 router.get('/add-product', (req, res, next) => {
-    res.render('add-product', {pageTitle: 'Add Product'});
+    res.render('add-product', {pageTitle: 'Add Product', path: endpoint + '/add-product'});
 });
 
 router.post('/product', (req, res, next) => {

@@ -23,7 +23,7 @@ app.use(shopRoute);
 app.use((req, res, next) => {
     res
         .status(404)
-        .render('not-found');
+        .render('not-found', {pageTitle: 'Page Not Found'});
 });
 
 app.listen(3000);
