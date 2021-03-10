@@ -9,6 +9,8 @@ const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 //create express app
 const app = express();
@@ -42,7 +44,15 @@ Product.belongsTo(User, {
     constraints: true,
     onDelete: 'CASCADE'
 });
-User.hasMany(Product);
+User.hasMany(Product); // optional, to make it's clear
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, {
+    through: CartItem // through tell the connection should be store, eg. cartId, productId
+});
+Product.belongsToMany(Cart, {
+    through: CartItem
+});
 
 sequelize
     // .sync({force: true}) // not for prod
