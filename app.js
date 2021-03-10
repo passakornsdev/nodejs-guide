@@ -22,6 +22,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 // any file req looks for file in static file path
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
 
@@ -47,7 +58,6 @@ sequelize
         return user; // if return object in then block, value is converted to promise, just make sure value are equal
     })
     .then(user => {
-        console.log(user);
         app.listen(3000);
     })
     .catch(err => {
