@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
     Product.findAll().then(products => {
@@ -116,10 +115,19 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-    res.render('shop/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders'
-    });
+    req.user
+        .getOrders({
+            // in app.js, order BelongToMany Product, but sequelize pluralize product, then it's products
+            // include = eager loading
+            include: ['products']
+        })
+        .then(orders => {
+            res.render('shop/orders', {
+                path: '/orders',
+                pageTitle: 'Your Orders',
+                orders
+            });
+        })
 };
 
 exports.postOrder = (req, res, next) => {
