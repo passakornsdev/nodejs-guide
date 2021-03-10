@@ -13,7 +13,7 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    Product.create({
+    req.user.createProduct({
         title,
         price,
         imageUrl,
@@ -31,16 +31,17 @@ exports.getEditProduct = (req, res, next) => {
     if (!editedMode) {
         res.redirect('/');
     } else {
-        Product.findByPk(productId)
-            .then(product => {
-                if (!product) {
+        req.user
+            .getProducts({where: {id: productId}})
+            .then(products => {
+                if (!products || products.length === 0) {
                     res.redirect('/');
                 } else {
                     res.render('admin/edit-product', {
                         pageTitle: 'Add Product',
                         path: '/admin/edit-product',
                         editing: true,
-                        product: product
+                        product: products[0]
                     });
                 }
             })
@@ -92,7 +93,8 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.findAll()
+    req.user
+        .getProducts()
         .then(products => {
             res.render('admin/products', {
                 prods: products,
