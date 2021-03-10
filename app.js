@@ -68,6 +68,9 @@ sequelize
         return user; // if return object in then block, value is converted to promise, just make sure value are equal
     })
     .then(user => {
+        return user.createCart();
+    })
+    .then(() => {
         app.listen(3000);
     })
     .catch(err => {
