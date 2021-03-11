@@ -13,43 +13,41 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    req.user.createProduct({
-        title,
-        price,
-        imageUrl,
-        description
-    }).then(() => {
-        res.redirect('/admin/products');
-    }).catch(err => {
-        console.log(err);
-    });
+    const product = new Product(title, price, description, imageUrl);
+    product.save()
+        .then(() => {
+            res.redirect('/admin/products');
+        })
+        .catch(err => {
+            console.log(err);
+        })
 };
 
-exports.getEditProduct = (req, res, next) => {
-    const editedMode = req.query.edit;
-    const productId = req.params.productId;
-    if (!editedMode) {
-        res.redirect('/');
-    } else {
-        req.user
-            .getProducts({where: {id: productId}})
-            .then(products => {
-                if (!products || products.length === 0) {
-                    res.redirect('/');
-                } else {
-                    res.render('admin/edit-product', {
-                        pageTitle: 'Add Product',
-                        path: '/admin/edit-product',
-                        editing: true,
-                        product: products[0]
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }
-};
+// exports.getEditProduct = (req, res, next) => {
+//     const editedMode = req.query.edit;
+//     const productId = req.params.productId;
+//     if (!editedMode) {
+//         res.redirect('/');
+//     } else {
+//         req.user
+//             .getProducts({where: {id: productId}})
+//             .then(products => {
+//                 if (!products || products.length === 0) {
+//                     res.redirect('/');
+//                 } else {
+//                     res.render('admin/edit-product', {
+//                         pageTitle: 'Add Product',
+//                         path: '/admin/edit-product',
+//                         editing: true,
+//                         product: products[0]
+//                     });
+//                 }
+//             })
+//             .catch(err => {
+//                 console.log(err);
+//             })
+//     }
+// };
 
 exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;

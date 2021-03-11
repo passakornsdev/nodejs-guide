@@ -3,10 +3,10 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// const adminRoutes = require('./routes/admin');
-// const shopRoute = require('./routes/shop');
+const adminRoutes = require('./routes/admin');
+const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database');
+const mongoConnect = require('./util/database').mongoConenct;
 
 //create express app
 const app = express();
@@ -21,15 +21,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-
+    next();
 });
 
-// app.use('/admin', adminRoutes);
-// app.use(shopRoute);
+app.use('/admin', adminRoutes);
+app.use(shopRoute);
 
 app.use(errorController.get404);
 
-mongoConnect(client => {
-    console.log(client);
+mongoConnect(() => {
     app.listen(3000);
 });
