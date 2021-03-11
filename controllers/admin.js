@@ -70,13 +70,9 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findByPk(prodId)
-        .then(product => {
-            // destroy = delete
-            return product.destroy(); // avoid nested chaining, simply returns promise
-        })
+    Product
+        .deleteById(prodId)
         .then(() => {
-            console.log('Destroyed product!');
             res.redirect('/admin/products');
         })
         .catch(err => {
