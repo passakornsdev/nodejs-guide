@@ -8,7 +8,7 @@ const mongoDbUri = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
-const User = require('./models/user');
+// const User = require('./models/user');
 
 //create express app
 const app = express();
@@ -22,17 +22,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 // any file req looks for file in static file path
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-    User
-        .findById('000000013a5cd00d306a48dd')
-        .then(user => {
-            req.user = new User(user.name, user.email, user.cart, user._id);
-            next();
-        })
-        .catch(err => {
-            console.log(err);
-        })
-});
+// app.use((req, res, next) => {
+//     User
+//         .findById('000000013a5cd00d306a48dd')
+//         .then(user => {
+//             req.user = new User(user.name, user.email, user.cart, user._id);
+//             next();
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         })
+// });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
