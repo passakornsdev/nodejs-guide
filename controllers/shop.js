@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
     Product
@@ -102,9 +103,26 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-    let fetchedCart;
     req.user
-        .addOrder()
+        .populate('cart.items.productId')
+        .execPopulate()
+        .then(user => {
+            const products = user.cart.items.map(s => {
+               return {quantity: s.quantity, product: {
+                   ...s.productId._doc // ._doc = special field in mongoose
+               }}
+            });
+            return new Order({
+                user: {
+                    name: req.user.name,
+                    userId: req.user
+                },
+                products
+            }).save();
+        })
+        .then(() => {
+            return req.user.clearCart();
+        })
         .then(() => {
             res.redirect('/orders');
         })
