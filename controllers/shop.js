@@ -86,11 +86,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
     req.user
-        .getOrders({
-            // in app.js, order BelongToMany Product, but sequelize pluralize product, then it's products
-            // include = eager loading
-            include: ['products']
-        })
+        .getOrders()
         .then(orders => {
             res.render('shop/orders', {
                 path: '/orders',
