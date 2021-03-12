@@ -2,11 +2,12 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
+const mongoDbUri = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConenct;
 const User = require('./models/user');
 
 //create express app
@@ -38,6 +39,11 @@ app.use(shopRoute);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-    app.listen(3000);
-});
+mongoose.connect(mongoDbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(result => {
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log(err);
+        throw err;
+    })
