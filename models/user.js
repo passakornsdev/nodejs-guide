@@ -27,7 +27,7 @@ class User {
         const cartProductIndex = this.cart.items.findIndex(cp => cp.productId.toString() === product._id.toString());
         let newQuantity = 1;
         const updatedCartItem = [...this.cart.items];
-        if(cartProductIndex >= 0) {
+        if (cartProductIndex >= 0) {
             newQuantity = this.cart.items[cartProductIndex].quantity + 1;
             updatedCartItem[cartProductIndex].quantity = newQuantity;
         } else {
@@ -43,6 +43,31 @@ class User {
                 $set: {
                     cart: updatedCart
                 }
+            });
+    }
+
+    getProductsInCart() {
+        const db = getDb();
+        const productIds = this.cart.items.map(s => s.productId);
+        return db
+            .collection('products')
+            .find({
+                _id: {
+                    $in: productIds
+                }
+            })
+            .toArray()
+            .then(products => {
+                return products.map(product => {
+                    // arrow func make this keyword refers to overall class, which function() doesn't
+                    return {
+                        ...product,
+                        quantity: this.cart.items.find(s => s.productId.toString() === product._id.toString()).quantity
+                    };
+                });
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
 
