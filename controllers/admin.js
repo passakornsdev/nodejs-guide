@@ -93,7 +93,11 @@ exports.postDeleteProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     Product
         .find()
+        // .select('title price -_id') //select title price,-_id = exclude id
+        // .populate('userId') // get doc that ref to field
+        // .populate('userId', 'name') // select name
         .then(products => {
+            console.log(products);
             res.render('admin/products', {
                 prods: products,
                 pageTitle: 'Admin Products',
