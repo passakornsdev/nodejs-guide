@@ -4,7 +4,8 @@ const Product = require('../models/product');
 exports.getAddProduct = (req, res, next) => {
     res.render('add-product', {
         pageTitle: 'Add Product',
-        path: '/admin/add-product'
+        path: '/admin/add-product',
+        isAuthenticated: req.isLoggedIn
     });
 };
 
@@ -25,7 +26,8 @@ exports.getProducts = (req, res, next) => {
             res.render('shop', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/'
+                path: '/',
+                isAuthenticated: req.isLoggedIn
             });
         })
         .catch(err => {
