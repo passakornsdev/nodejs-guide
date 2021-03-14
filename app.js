@@ -7,6 +7,7 @@ const session = require('express-session');
 // require give a func, the func that require session in arg
 const MongodbStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const MONGODB_URI = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
@@ -43,6 +44,7 @@ app.use(session({
 }));
 
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
     if(!req.session.user) {
