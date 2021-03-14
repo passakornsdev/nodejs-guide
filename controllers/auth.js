@@ -1,6 +1,16 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
+
+const transporter = nodemailer
+    .createTransport(sendGridTransport({
+        auth: {
+            // from sendgrid
+            api_key: 'key'
+        }
+    }));
 
 exports.getLogin = (req, res, next) => {
     const errorMessages = req.flash('error'); // after retrieve, then flash deletes message immediately
@@ -74,8 +84,20 @@ exports.postSignup = (req, res, next) => {
                         .save()
                 })
                 .then(() => {
-                    res.redirect('/login')
-                });
+                    res.redirect('/login');
+                    // redirect before send mail cause send mail may take too long
+                    // if there are a lot of transaction so leave sending mail at
+                    // the bottom of func make app performance better
+                    return transporter.sendMail({
+                        to: email,
+                        from: 'shop@node-complete.com',
+                        subject: 'Signup Successful',
+                        html: '<h1>You successfully signed up</h1>'
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         })
         .catch(err => {
             console.log(err);
