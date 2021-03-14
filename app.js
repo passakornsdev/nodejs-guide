@@ -12,7 +12,6 @@ const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const authRoute = require('./routes/auth');
 const errorController = require('./controllers/error');
-const User = require('./models/user');
 
 //create express app
 const app = express();
@@ -39,19 +38,6 @@ app.use(session({
     //     'Max-Age': 3000
     // }
 }));
-
-app.use((req, res, next) => {
-    User
-        .findById('604bbad1f92bcd2720192577')
-        .then(user => {
-            // user is mongoose model, so we can call req.user.save,find
-            req.user = user;
-            next();
-        })
-        .catch(err => {
-            console.log(err);
-        })
-});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
