@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const authRoute = require('./routes/auth');
 const errorController = require('./controllers/error');
+const User = require('./models/user');
 
 //create express app
 const app = express();
@@ -39,13 +40,25 @@ app.use(session({
     // }
 }));
 
+app.use((req, res, next) => {
+    if(!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
 app.use(authRoute);
 
 app.use(errorController.get404);
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(result => {
         app.listen(3000);
     })
