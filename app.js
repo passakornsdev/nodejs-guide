@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 // require give a func, the func that require session in arg
 const MongodbStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const MONGODB_URI = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
@@ -21,6 +22,7 @@ const store = new MongodbStore({
     collection: 'sessions',
     // expires: true // optional
 });
+const csrfProtection = csrf({});
 
 // set template engine
 // app.set('view engine', 'pug');
@@ -39,6 +41,8 @@ app.use(session({
     //     'Max-Age': 3000
     // }
 }));
+
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
     if(!req.session.user) {
