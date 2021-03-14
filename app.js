@@ -4,8 +4,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+// require give a func, the func that require session in arg
+const MongodbStore = require('connect-mongodb-session')(session);
 
-const mongoDbUri = require('./mongo-db-connection-uri');
+const MONGODB_URI = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const authRoute = require('./routes/auth');
@@ -14,6 +16,11 @@ const User = require('./models/user');
 
 //create express app
 const app = express();
+const store = new MongodbStore({
+    uri: MONGODB_URI,
+    collection: 'sessions',
+    // expires: true // optional
+});
 
 // set template engine
 // app.set('view engine', 'pug');
@@ -27,6 +34,7 @@ app.use(session({
     secret: 'my secret', // use to hash session id
     resave: false, // resave when session is change
     saveUninitialized: false,
+    store: store // tell session to store in mongodb
     // cookie: {
     //     'Max-Age': 3000
     // }
@@ -51,7 +59,7 @@ app.use(authRoute);
 
 app.use(errorController.get404);
 
-mongoose.connect(mongoDbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(result => {
         app.listen(3000);
     })
