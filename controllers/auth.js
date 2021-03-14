@@ -12,9 +12,11 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+    const errorMessages = req.flash('error'); // after retrieve, then flash deletes message immediately
     res.render('auth/signup', {
         path: '/signup',
-        pageTitle: 'Signup'
+        pageTitle: 'Signup',
+        errorMessage: errorMessages.length > 0 ? errorMessages[0]: null
     });
 };
 
@@ -57,7 +59,7 @@ exports.postSignup = (req, res, next) => {
     User.findOne({email})
         .then(userDoc => {
             if (userDoc) {
-                // TO DO ADD ERROR MSG
+                req.flash('error', 'Duplicated email, Please try another email!');
                 return res.redirect('/signup');
             }
             // return hash fn. improve performance
