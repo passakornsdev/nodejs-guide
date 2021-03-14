@@ -56,6 +56,13 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+app.use((req, res, next) => {
+    // add var to views
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
 app.use(authRoute);
