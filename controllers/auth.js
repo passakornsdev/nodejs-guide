@@ -155,3 +155,27 @@ exports.postReset = (req, res, next) => {
             })
     });
 }
+
+exports.getNewPassword = (req, res, next) => {
+    const resetToken = req.params.token;
+    User.findOne({
+        resetToken,
+        resetTokenExpiration: {$gt: Date.now()}
+    })
+        .then(user => {
+            if(!user) {
+                req.flash('error', 'Token not found!');
+                return res.redirect('/reset');
+            }
+            const errorMessages = req.flash('error'); // after retrieve, then flash deletes message immediately
+            res.render('auth/new-password', {
+                path: '/',
+                pageTitle: 'New Password',
+                errorMessage: errorMessages.length > 0 ? errorMessages[0] : null,
+                userId: user._id.toString()
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
