@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
@@ -39,11 +41,19 @@ exports.postSignup = (req, res, next) => {
           // TO DO ADD ERROR MSG
           return res.redirect('/signup');
         }
-        return new User({email, password, cart: {items: []}})
-            .save()
-      })
-      .then(() => {
-        res.redirect('/login')
+        // return hash fn. improve performance
+        return bcrypt
+            .hash(password, 12)
+            .then(hashPassword => {
+                new User({
+                    email,
+                    password: hashPassword,
+                    cart: {items: []}})
+                    .save()
+            })
+            .then(() => {
+                res.redirect('/login')
+            });
       })
       .catch(err => {
         console.log(err);
