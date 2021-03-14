@@ -3,9 +3,11 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
+    const errorMessages = req.flash('error'); // after retrieve, then flash deletes message immediately
     res.render('auth/login', {
         path: '/login',
-        pageTitle: 'Login'
+        pageTitle: 'Login',
+        errorMessage: errorMessages.length > 0 ? errorMessages[0]: null
     });
 };
 
@@ -22,6 +24,7 @@ exports.postLogin = (req, res, next) => {
     User.findOne({email})
         .then(user => {
             if (!user) {
+                req.flash('error', 'invalid email or password.');
                 return res.redirect('/login');
             }
             return bcrypt.compare(password, user.password)
@@ -36,6 +39,7 @@ exports.postLogin = (req, res, next) => {
                             res.redirect('/');
                         });
                     }
+                    req.flash('error', 'invalid password or password.');
                     res.redirect('/login');
                 })
                 .catch(err => {
