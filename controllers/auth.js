@@ -110,3 +110,12 @@ exports.postLogout = (req, res, next) => {
         res.redirect('/');
     });
 };
+
+exports.getReset = (req, res, next) => {
+    const errorMessages = req.flash('error'); // after retrieve, then flash deletes message immediately
+    res.render('auth/reset', {
+        path: '/',
+        pageTitle: 'Reset Password',
+        errorMessage: errorMessages.length > 0 ? errorMessages[0]: null
+    });
+}
