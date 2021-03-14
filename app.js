@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const mongoDbUri = require('./mongo-db-connection-uri');
 const adminRoutes = require('./routes/admin');
@@ -22,6 +23,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: false}));
 // any file req looks for file in static file path
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret: 'my secret', // use to hash session id
+    resave: false, // resave when session is change
+    saveUninitialized: false,
+    // cookie: {
+    //     'Max-Age': 3000
+    // }
+}));
 
 app.use((req, res, next) => {
     User
