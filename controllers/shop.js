@@ -3,7 +3,7 @@ const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
     Product
-        .find()
+        .findAll()
         // we can use cursor, next, eager load
         // .cursor()
         // .next()
@@ -21,7 +21,7 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
     Product
-        .findById(prodId)
+        .findByPk(prodId)
         .then(product => {
             res.render('shop/product-detail', {
                 product: product,
@@ -36,7 +36,7 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
     Product
-        .find()
+        .findAll()
         .then(products => {
         res.render('shop/index', {
             prods: products,
@@ -68,7 +68,7 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findById(prodId)
+    Product.findByPk(prodId)
         .then(product => {
            return req.user.addToCart(product);
         })
@@ -92,7 +92,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
     Order
-        .find({'user.userId': req.user})
+        .findAll({'user.userId': req.user})
         .then(orders => {
             res.render('shop/orders', {
                 path: '/orders',

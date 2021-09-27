@@ -172,7 +172,7 @@ exports.getNewPassword = (req, res, next) => {
                 path: '/',
                 pageTitle: 'New Password',
                 errorMessage: errorMessages.length > 0 ? errorMessages[0] : null,
-                userId: user._id.toString(),
+                userId: user.id.toString(),
                 passwordToken: resetToken
             });
         })
@@ -186,7 +186,7 @@ exports.postNewPassword = (req, res, next) => {
     const userId = req.body.userId;
     const resetToken = req.body.passwordToken;
     let user;
-    User.findOne({resetToken, resetTokenExpiration: {$gt: Date.now()}, _id: userId})
+    User.findOne({resetToken, resetTokenExpiration: {$gt: Date.now()}, id: userId})
         .then(user => {
             if(!user) {
                 req.flash('error', 'Token not found!');

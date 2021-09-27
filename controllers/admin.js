@@ -14,7 +14,7 @@ exports.postAddProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     const product = new Product({title, price, description, imageUrl,
-        userId: req.user // just pass user object, with ref:, mongoose will look to _id automatically
+        userId: req.user // just pass user object, with ref:, mongoose will look to id automatically
     });
     product
         .save()
@@ -33,7 +33,7 @@ exports.getEditProduct = (req, res, next) => {
         res.redirect('/');
     } else {
         Product
-            .findById(productId)
+            .findByPk(productId)
             .then(product => {
                 if (!product) {
                     res.redirect('/');
@@ -59,9 +59,9 @@ exports.postEditProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     Product
-        .findById(prodId)
+        .findByPk(prodId)
         .then(product => {
-            if(product.userId.toString() !== req.user._id.toString()) {
+            if(product.userId.toString() !== req.user.id.toString()) {
                 return res.redirect('/');
             }
             product.title = title;
@@ -83,7 +83,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
     Product
-        .deleteOne({_id: prodId, userId: req.user})
+        .deleteOne({id: prodId, userId: req.user})
         .then(() => {
             res.redirect('/admin/products');
         })
@@ -95,10 +95,10 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     Product
-        .find(
+        .findAll(
             {userId: req.user}
             )
-        // .select('title price -_id') //select title price,-_id = exclude id
+        // .select('title price -id') //select title price,-id = exclude id
         // .populate('userId') // get doc that ref to field
         // .populate('userId', 'name') // select name
         .then(products => {
